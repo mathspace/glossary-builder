@@ -7,11 +7,11 @@ const build = require('./build');
 
 exports.build = async ({ files, entrypoint, workPath, config }) => {
   await download(files, workPath);
-  const files = glob
+  const data = glob
     .sync(config.data, { cwd: workPath })
     .map(file => fs.readFileSync(path.join(workPath, file)));
-  console.log(files);
-  const result = build(files);
+  console.log(data);
+  const result = build(data);
   console.log(result);
   return result;
 };
