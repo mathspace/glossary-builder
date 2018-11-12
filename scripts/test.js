@@ -165,8 +165,8 @@ assert.deepStrictEqual(
 );
 
 assert.deepStrictEqual(Object.keys(build([data])).sort(), [
-  'en-us/a/thing',
-  'en-us/b/thing',
-  'en/a/thing',
-  'en/b/thing',
+  'en-us/a/thing.html',
+  'en-us/b/thing.html',
+  'en/a/thing.html',
+  'en/b/thing.html',
 ]);

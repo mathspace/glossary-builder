@@ -24,9 +24,8 @@ const build = data => {
       const definitionSets = datastore
         .findAll('definition-set')
         .forEach(definitionSet => {
-          const fileName = [language.id, collection.id, definitionSet.id].join(
-            '/',
-          );
+          const fileName =
+            [language.id, collection.id, definitionSet.id].join('/') + '.html';
           collectionLineage.forEach(searchCollection => {
             if (result[fileName]) return;
             languageLineage.forEach(searchLanguage => {
