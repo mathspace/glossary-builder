@@ -1,13 +1,15 @@
 const yaml = require('js-yaml');
+const FileBlob = require('@now/build-utils/file-blob');
 
-const datastore = require('./datastore');
+const createDatastore = require('./createDatastore');
 const getLineage = require('./getLineage');
 
-const build = files => {
+const build = data => {
+  const datastore = createDatastore();
   const result = {};
 
-  files
-    .reduce((records, file) => records.concat(yaml.safeLoadAll(file)), [])
+  data
+    .reduce((records, x) => records.concat(yaml.safeLoadAll(x)), [])
     .forEach(record => {
       datastore.create(record);
     });
@@ -39,7 +41,9 @@ const build = files => {
                       `definition-set/${definitionSet.id}`,
                 );
               if (definition)
-                result[fileName] = `${definition.title}\n\n${definition.body}`;
+                result[fileName] = new FileBlob({
+                  data: `${definition.title}\n\n${definition.body}`,
+                });
             });
           });
         });

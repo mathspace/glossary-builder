@@ -100,9 +100,7 @@ assert.deepStrictEqual(getLineage(datastore2, 'language/b'), [
   'language/a',
 ]);
 
-assert.deepStrictEqual(
-  build([
-    `
+const data = `
 type: language
 id: en
 parent:
@@ -152,12 +150,23 @@ definitionSet: definition-set/thing
 title: A Thing
 body:
   MOM, COLOR AND TRIALING!
-`,
-  ]),
-  {
-    'en/a/thing': 'A Thing\n\nMum, colour and trialling.',
-    'en/b/thing': 'A Thing\n\nMOM, COLOR AND TRIALING!',
-    'en-us/a/thing': 'A Thing\n\nMom, color and trialing.',
-    'en-us/b/thing': 'A Thing\n\nMOM, COLOR AND TRIALING!',
-  },
+`;
+
+assert.deepStrictEqual(
+  Object.values(build([data]))
+    .map(x => x.data)
+    .sort(),
+  [
+    'A Thing\n\nMOM, COLOR AND TRIALING!',
+    'A Thing\n\nMOM, COLOR AND TRIALING!',
+    'A Thing\n\nMom, color and trialing.',
+    'A Thing\n\nMum, colour and trialling.',
+  ],
 );
+
+assert.deepStrictEqual(Object.keys(build([data])).sort(), [
+  'en-us/a/thing',
+  'en-us/b/thing',
+  'en/a/thing',
+  'en/b/thing',
+]);

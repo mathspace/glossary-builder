@@ -19,6 +19,7 @@
     "@now/build-utils": "^0.4.26"
   },
   "devDependencies": {
+    "@now/build-utils": "^0.4.26",
     "np": "^3.0.4"
   }
 }
