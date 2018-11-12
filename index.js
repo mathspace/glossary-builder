@@ -10,6 +10,6 @@ exports.build = async ({ files, entrypoint, workPath, config }) => {
   return build(
     glob
       .sync(config.data, { cwd: workPath })
-      .map(file => fs.readFileSync(path.join(root, file))),
+      .map(file => fs.readFileSync(path.join(workPath, file))),
   );
 };
