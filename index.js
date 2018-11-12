@@ -9,7 +9,7 @@ exports.build = async ({ files, entrypoint, workPath, config }) => {
   await download(files, workPath);
   const data = glob
     .sync(config.data, { cwd: workPath })
-    .map(file => fs.readFileSync(path.join(workPath, file)));
+    .map(file => fs.readFileSync(path.join(workPath, file)).toString());
   console.log(data);
   const result = build(data);
   console.log(result);
