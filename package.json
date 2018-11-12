@@ -1,0 +1,23 @@
+{
+  "name": "@mathspace/glossary-builder",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:mathspace/glossary-builder.git",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "release": "np",
+    "test": "node ./scripts/test.js"
+  },
+  "dependencies": {
+    "js-yaml": "^3.12.0"
+  },
+  "peerDependencies": {
+    "@now/build-utils": "^0.4.26"
+  },
+  "devDependencies": {
+    "np": "^3.0.4"
+  }
+}
