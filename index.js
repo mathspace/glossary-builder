@@ -22,9 +22,10 @@ exports.build = async ({ files, entrypoint, workPath, config }) => {
   console.log(mountpoint);
   console.log(root);
 
+  console.log(fs.readdirSync(root));
+  console.log(fs.readdirSync(root).map(file => path.join(root, file)));
+
   return build(
-    fs
-      .readdirSync(root)
-      .map(file => fs.readFileSync(path.join(root, file))),
+    fs.readdirSync(root).map(file => fs.readFileSync(path.join(root, file))),
   );
 };
