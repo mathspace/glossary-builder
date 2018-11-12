@@ -1,31 +1,15 @@
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 const download = require('@now/build-utils/fs/download');
 
 const build = require('./build');
 
 exports.build = async ({ files, entrypoint, workPath, config }) => {
-  console.log(files);
-  console.log(workPath);
-  console.log(config);
-
-  await download(
-    Object.keys(files)
-      .filter(key => key.startsWith(config.data))
-      .reduce((result, key) => ({ ...result, [key]: files[key] }), {}),
-    workPath,
-  );
-
-  const mountpoint = path.dirname(entrypoint);
-  const root = path.join(workPath, mountpoint);
-
-  console.log(mountpoint);
-  console.log(root);
-
-  console.log(fs.readdirSync(root));
-  console.log(fs.readdirSync(root).map(file => path.join(root, file)));
-
+  await download(files, workPath);
   return build(
-    fs.readdirSync(root).map(file => fs.readFileSync(path.join(root, file))),
+    glob
+      .sync(config.data, { cwd: workPath })
+      .map(file => fs.readFileSync(path.join(root, file))),
   );
 };
