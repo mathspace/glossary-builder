@@ -7,7 +7,7 @@ exports.build = async ({ files, config }) => {
     .reduce(async (promise, stream) => {
       await promise;
       return FileBlob.fromStream({
-        stream: files[entrypoint].toStream(),
+        stream,
       }).toString();
     }, Promise.resolve());
 
