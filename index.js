@@ -4,7 +4,11 @@ const download = require('@now/build-utils/fs/download');
 
 const build = require('./build');
 
-exports.build = async ({ files, workPath, config }) => {
+exports.build = async ({ files, entrypoint, workPath, config }) => {
+  console.log(files);
+  console.log(workPath);
+  console.log(config);
+
   await download(
     Object.keys(files)
       .filter(key => key.startsWith(config.data))
@@ -12,9 +16,15 @@ exports.build = async ({ files, workPath, config }) => {
     workPath,
   );
 
+  const mountpoint = path.dirname(entrypoint);
+  const root = path.join(workPath, mountpoint);
+
+  console.log(mountpoint);
+  console.log(root);
+
   return build(
     fs
-      .readdirSync(workPath)
-      .map(file => fs.readFileSync(path.join(workPath, file))),
+      .readdirSync(root)
+      .map(file => fs.readFileSync(path.join(root, file))),
   );
 };
