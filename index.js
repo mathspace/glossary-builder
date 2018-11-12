@@ -1,5 +1,7 @@
 const FileBlob = require('@now/build-utils/file-blob');
 
+const build = require('./build');
+
 exports.build = async ({ files, config }) => {
   const data = await Object.keys(files)
     .filter(key => key.startsWith(config.data))
