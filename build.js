@@ -3,11 +3,11 @@ const yaml = require('js-yaml');
 const datastore = require('./datastore');
 const getLineage = require('./getLineage');
 
-const build = data => {
+const build = files => {
   const result = {};
 
-  data
-    .reduce((records, x) => records.concat(yaml.safeLoadAll(x)), [])
+  files
+    .reduce((records, file) => records.concat(yaml.safeLoadAll(file)), [])
     .forEach(record => {
       datastore.create(record);
     });
