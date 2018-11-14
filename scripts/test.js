@@ -157,10 +157,10 @@ assert.deepStrictEqual(
     .map(x => x.data)
     .sort(),
   [
-    'A Thing\n\nMOM, COLOR AND TRIALING!',
-    'A Thing\n\nMOM, COLOR AND TRIALING!',
-    'A Thing\n\nMom, color and trialing.',
-    'A Thing\n\nMum, colour and trialling.',
+    '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+    '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+    '<h1>A Thing</h1>\n<p>Mom, color and trialing.</p>\n',
+    '<h1>A Thing</h1>\n<p>Mum, colour and trialling.</p>\n',
   ],
 );
 

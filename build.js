@@ -1,5 +1,8 @@
 const yaml = require('js-yaml');
 const FileBlob = require('@now/build-utils/file-blob');
+var remark = require('remark');
+var recommended = require('remark-preset-lint-recommended');
+var html = require('remark-html');
 
 const createDatastore = require('./createDatastore');
 const getLineage = require('./getLineage');
@@ -39,10 +42,20 @@ const build = data => {
                     record.definitionSet ===
                       `definition-set/${definitionSet.id}`,
                 );
-              if (definition)
-                result[fileName] = new FileBlob({
-                  data: `${definition.title}\n\n${definition.body}`,
-                });
+              if (definition) {
+                remark()
+                  .use(recommended)
+                  .use(html)
+                  .process(
+                    `# ${definition.title}\n\n${definition.body}`,
+                    (err, data) => {
+                      if (err) throw err;
+                      result[fileName] = new FileBlob({
+                        data: String(data),
+                      });
+                    },
+                  );
+              }
             });
           });
         });
