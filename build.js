@@ -12,17 +12,17 @@ const build = data => {
 
   datastore.findAll('language').forEach(language => {
     const languageLineage = getLineage(datastore, `language/${language.id}`);
-    const collections = datastore.findAll('collection').forEach(collection => {
-      const collectionLineage = getLineage(
+    const curriculums = datastore.findAll('curriculum').forEach(curriculum => {
+      const curriculumLineage = getLineage(
         datastore,
-        `collection/${collection.id}`,
+        `curriculum/${curriculum.id}`,
       ).concat([null]);
       const definitionSets = datastore
         .findAll('definition-set')
         .forEach(definitionSet => {
           const fileName =
-            [language.id, collection.id, definitionSet.id].join('/') + '.html';
-          collectionLineage.forEach(searchCollection => {
+            [language.id, curriculum.id, definitionSet.id].join('/') + '.html';
+          curriculumLineage.forEach(searchCollection => {
             if (result[fileName]) return;
             languageLineage.forEach(searchLanguage => {
               if (result[fileName]) return;
@@ -31,7 +31,7 @@ const build = data => {
                 .find(
                   record =>
                     record.language === searchLanguage &&
-                    record.collection === searchCollection &&
+                    record.curriculum === searchCollection &&
                     record.definitionSet ===
                       `definition-set/${definitionSet.id}`,
                 );

@@ -135,14 +135,14 @@ id: en-us
 parent: language/en
 title: English (United States)
 ---
-type: collection
+type: curriculum
 id: a
 parent:
 title: Collection A
 ---
-type: collection
+type: curriculum
 id: b
-parent: collection/a
+parent: curriculum/a
 title: Collection B
 ---
 type: definition-set
@@ -151,7 +151,7 @@ id: thing
 type: definition
 id: a
 language: language/en
-collection:
+curriculum:
 definitionSet: definition-set/thing
 title: A Thing
 body:
@@ -160,7 +160,7 @@ body:
 type: definition
 id: b
 language: language/en-us
-collection:
+curriculum:
 definitionSet: definition-set/thing
 title: A Thing
 body:
@@ -169,7 +169,7 @@ body:
 type: definition
 id: c
 language: language/en
-collection: collection/b
+curriculum: curriculum/b
 definitionSet: definition-set/thing
 title: A Thing
 body:

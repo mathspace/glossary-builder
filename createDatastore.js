@@ -13,7 +13,7 @@ const createDatastore = (data) => {
     foreignKey('parent'),
   ]);
 
-  datastore.define('collection', [
+  datastore.define('curriculum', [
     isString('title'),
     required('title'),
     foreignKey('parent'),
