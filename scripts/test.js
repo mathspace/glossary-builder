@@ -72,11 +72,13 @@ const getLineage = require('../getLineage');
     },
   ]);
 
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+  });
+
   assert.throws(() => {
-    datastore.create({
-      type: 'comment',
-      id: 'a',
-    });
+    datastore.validate();
   });
 })();
 
