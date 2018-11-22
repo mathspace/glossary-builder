@@ -1,4 +1,3 @@
-const yaml = require('js-yaml');
 const FileBlob = require('@now/build-utils/file-blob');
 var remark = require('remark');
 var recommended = require('remark-preset-lint-recommended');
@@ -8,14 +7,8 @@ const createDatastore = require('./createDatastore');
 const getLineage = require('./getLineage');
 
 const build = data => {
-  const datastore = createDatastore();
+  const datastore = createDatastore(data);
   const result = {};
-
-  data
-    .reduce((records, x) => records.concat(yaml.safeLoadAll(x)), [])
-    .forEach(record => {
-      datastore.create(record);
-    });
 
   datastore.findAll('language').forEach(language => {
     const languageLineage = getLineage(datastore, `language/${language.id}`);

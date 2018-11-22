@@ -1,8 +1,10 @@
+const yaml = require('js-yaml');
+
 const Datastore = require('./lib/Datastore');
 
 const { required, isString, foreignKey } = Datastore;
 
-const createDatastore = () => {
+const createDatastore = (data) => {
   const datastore = new Datastore();
 
   datastore.define('language', [
@@ -32,6 +34,14 @@ const createDatastore = () => {
     // TODO: Unique composite key for definitions:
     // Datastore.unique(['language', 'collection', 'definitionSet']),
   ]);
+
+  data
+    .reduce((records, x) => records.concat(yaml.safeLoadAll(x)), [])
+    .forEach(record => {
+      datastore.create(record);
+    });
+
+  datastore.validate();
 
   return datastore;
 };
