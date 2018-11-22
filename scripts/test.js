@@ -5,102 +5,124 @@ const Datastore = require('../lib/Datastore');
 const build = require('../build');
 const getLineage = require('../getLineage');
 
-const datastore = new Datastore();
+// findByRef
+(() => {
+  const datastore = new Datastore();
 
-datastore.define('post', []);
-datastore.create({
-  type: 'post',
-  id: 'a',
-});
-datastore.create({
-  type: 'post',
-  id: 'b',
-});
-datastore.create({
-  type: 'post',
-  id: 'c',
-});
-
-assert.deepStrictEqual(datastore.findRef('post/a'), { type: 'post', id: 'a' });
-assert.deepStrictEqual(datastore.findAll('post'), [
-  { type: 'post', id: 'a' },
-  { type: 'post', id: 'b' },
-  { type: 'post', id: 'c' },
-]);
-assert.deepStrictEqual(datastore.findOne('post', 'a'), {
-  type: 'post',
-  id: 'a',
-});
-
-assert.throws(() => {
+  datastore.define('post', []);
   datastore.create({
-    type: 'comment',
+    type: 'post',
     id: 'a',
   });
-});
 
-datastore.define('comment', [
-  record => {
-    if (record.title !== 'Hello!') throw Error('Incorrect title');
-  },
-]);
-
-assert.throws(() => {
-  datastore.create({
-    type: 'comment',
+  assert.deepStrictEqual(datastore.findRef('post/a'), {
+    type: 'post',
     id: 'a',
   });
-});
+})();
 
-datastore.create({
-  type: 'comment',
-  id: 'a',
-  title: 'Hello!',
-});
+// findByAll
+(() => {
+  const datastore = new Datastore();
 
-assert.deepStrictEqual(datastore.findRef('post/a'), { type: 'post', id: 'a' });
-assert.deepStrictEqual(datastore.findAll('post'), [
-  { type: 'post', id: 'a' },
-  { type: 'post', id: 'b' },
-  { type: 'post', id: 'c' },
-]);
-assert.deepStrictEqual(datastore.findOne('post', 'a'), {
-  type: 'post',
-  id: 'a',
-});
+  datastore.define('post', []);
+  datastore.create({
+    type: 'post',
+    id: 'a',
+  });
+  datastore.create({
+    type: 'post',
+    id: 'b',
+  });
+  datastore.create({
+    type: 'post',
+    id: 'c',
+  });
 
-assert.deepStrictEqual(datastore.findRef('comment/a'), {
-  type: 'comment',
-  id: 'a',
-  title: 'Hello!',
-});
-assert.deepStrictEqual(datastore.findAll('comment'), [
-  { type: 'comment', id: 'a', title: 'Hello!' },
-]);
-assert.deepStrictEqual(datastore.findOne('comment', 'a'), {
-  type: 'comment',
-  id: 'a',
-  title: 'Hello!',
-});
+  assert.deepStrictEqual(datastore.findAll('post'), [
+    { type: 'post', id: 'a' },
+    { type: 'post', id: 'b' },
+    { type: 'post', id: 'c' },
+  ]);
+})();
 
-const datastore2 = new Datastore();
-datastore2.define('language');
-datastore2.create({
-  type: 'language',
-  id: 'a',
-  parent: null,
-});
-datastore2.create({
-  type: 'language',
-  id: 'b',
-  parent: 'language/a',
-});
-assert.deepStrictEqual(getLineage(datastore2, 'language/b'), [
-  'language/b',
-  'language/a',
-]);
+// findOne
+(() => {
+  const datastore = new Datastore();
 
-const data = `
+  datastore.define('post', []);
+  datastore.create({
+    type: 'post',
+    id: 'a',
+  });
+
+  assert.deepStrictEqual(datastore.findOne('post', 'a'), {
+    type: 'post',
+    id: 'a',
+  });
+})();
+
+// validate
+(() => {
+  const datastore = new Datastore();
+
+  datastore.define('comment', [
+    record => {
+      if (record.title !== 'Hello!') throw Error('Incorrect title');
+    },
+  ]);
+
+  assert.throws(() => {
+    datastore.create({
+      type: 'comment',
+      id: 'a',
+    });
+  });
+})();
+
+// validate
+(() => {
+  const datastore = new Datastore();
+
+  datastore.define('comment', [
+    record => {
+      if (record.title !== 'Hello!') throw Error('Incorrect title');
+    },
+  ]);
+
+  assert.doesNotThrow(() => {
+    datastore.create({
+      type: 'comment',
+      id: 'a',
+      title: 'Hello!',
+    });
+  });
+})();
+
+// getLineage
+(() => {
+  const datastore = new Datastore();
+
+  datastore.define('language');
+  datastore.create({
+    type: 'language',
+    id: 'a',
+    parent: null,
+  });
+  datastore.create({
+    type: 'language',
+    id: 'b',
+    parent: 'language/a',
+  });
+  assert.deepStrictEqual(getLineage(datastore, 'language/b'), [
+    'language/b',
+    'language/a',
+  ]);
+})();
+
+// build
+(() => {
+  const data = `
 type: language
 id: en
 parent:
@@ -152,21 +174,22 @@ body:
   MOM, COLOR AND TRIALING!
 `;
 
-assert.deepStrictEqual(
-  Object.values(build([data]))
-    .map(x => x.data)
-    .sort(),
-  [
-    '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
-    '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
-    '<h1>A Thing</h1>\n<p>Mom, color and trialing.</p>\n',
-    '<h1>A Thing</h1>\n<p>Mum, colour and trialling.</p>\n',
-  ],
-);
+  assert.deepStrictEqual(
+    Object.values(build([data]))
+      .map(x => x.data)
+      .sort(),
+    [
+      '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+      '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+      '<h1>A Thing</h1>\n<p>Mom, color and trialing.</p>\n',
+      '<h1>A Thing</h1>\n<p>Mum, colour and trialling.</p>\n',
+    ],
+  );
 
-assert.deepStrictEqual(Object.keys(build([data])).sort(), [
-  'en-us/a/thing.html',
-  'en-us/b/thing.html',
-  'en/a/thing.html',
-  'en/b/thing.html',
-]);
+  assert.deepStrictEqual(Object.keys(build([data])).sort(), [
+    'en-us/a/thing.html',
+    'en-us/b/thing.html',
+    'en/a/thing.html',
+    'en/b/thing.html',
+  ]);
+})();
