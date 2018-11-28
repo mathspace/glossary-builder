@@ -83,7 +83,6 @@ const getLineage = require('../getLineage');
   }, ({ message }) => message === 'Incorrect title (in comment/a from /example/file.yml)');
 })();
 
-// validate
 (() => {
   const datastore = new Datastore();
 
@@ -129,6 +128,20 @@ const getLineage = require('../getLineage');
   assert.throws(() => {
     datastore.validate();
   }, ({ message }) => message === 'Field "name" must not be null (in comment/a from unknown source)');
+})();
+
+(() => {
+  const datastore = new Datastore();
+  datastore.define('comment', [Datastore.notNull('name')]);
+
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+  });
+
+  assert.doesNotThrow(() => {
+    datastore.validate();
+  });
 })();
 
 // Datastore.string
