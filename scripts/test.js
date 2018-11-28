@@ -214,22 +214,25 @@ title: English (United States)
 type: curriculum
 id: a
 parent:
-title: Collection A
+title: Curriculum A
 ---
 type: curriculum
 id: b
 parent: curriculum/a
-title: Collection B
+title: Curriculum B
 ---
 type: definition-set
 id: thing
+---
+type: definition-set
+id: zzz
 ---
 type: definition
 id: a
 language: language/en
 curriculum:
 definitionSet: definition-set/thing
-title: A Thing
+title: X Thing
 body:
   Mum, colour and trialling.
 ---
@@ -238,7 +241,7 @@ id: b
 language: language/en-us
 curriculum:
 definitionSet: definition-set/thing
-title: A Thing
+title: Y Thing
 body:
   Mom, color and trialing.
 ---
@@ -247,27 +250,50 @@ id: c
 language: language/en
 curriculum: curriculum/b
 definitionSet: definition-set/thing
-title: A Thing
+title: X Thing
 body:
   MOM, COLOR AND TRIALING!
+---
+type: definition
+id: d
+language: language/en
+curriculum: curriculum/b
+definitionSet: definition-set/zzz
+title: Z Thing
+body:
+  zzz
 `;
 
+  const result = build([data]);
+
   assert.deepStrictEqual(
-    Object.values(build([data]))
+    Object.values(result)
       .map(x => x.data)
       .sort(),
     [
-      '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
-      '<h1>A Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
-      '<h1>A Thing</h1>\n<p>Mom, color and trialing.</p>\n',
-      '<h1>A Thing</h1>\n<p>Mum, colour and trialling.</p>\n',
+      '<h1>Curriculum A</h1>\n<ul><li><a href="/en-us/a/thing.html">Y Thing</a></li></ul>',
+      '<h1>Curriculum A</h1>\n<ul><li><a href="/en/a/thing.html">X Thing</a></li></ul>',
+      '<h1>Curriculum B</h1>\n<ul><li><a href="/en-us/b/thing.html">X Thing</a></li>\n<li><a href="/en-us/b/zzz.html">Z Thing</a></li></ul>',
+      '<h1>Curriculum B</h1>\n<ul><li><a href="/en/b/thing.html">X Thing</a></li>\n<li><a href="/en/b/zzz.html">Z Thing</a></li></ul>',
+      '<h1>X Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+      '<h1>X Thing</h1>\n<p>MOM, COLOR AND TRIALING!</p>\n',
+      '<h1>X Thing</h1>\n<p>Mum, colour and trialling.</p>\n',
+      '<h1>Y Thing</h1>\n<p>Mom, color and trialing.</p>\n',
+      '<h1>Z Thing</h1>\n<p>zzz</p>\n',
+      '<h1>Z Thing</h1>\n<p>zzz</p>\n',
     ],
   );
 
-  assert.deepStrictEqual(Object.keys(build([data])).sort(), [
+  assert.deepStrictEqual(Object.keys(result).sort(), [
+    'en-us/a.html',
     'en-us/a/thing.html',
+    'en-us/b.html',
     'en-us/b/thing.html',
+    'en-us/b/zzz.html',
+    'en/a.html',
     'en/a/thing.html',
+    'en/b.html',
     'en/b/thing.html',
+    'en/b/zzz.html',
   ]);
 })();
