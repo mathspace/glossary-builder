@@ -22,7 +22,7 @@ const build = data => {
         .forEach(definitionSet => {
           const fileName =
             [language.id, curriculum.id, definitionSet.id].join('/') + '.html';
-          curriculumLineage.forEach(searchCollection => {
+          curriculumLineage.forEach(searchCurriculum => {
             if (result[fileName]) return;
             languageLineage.forEach(searchLanguage => {
               if (result[fileName]) return;
@@ -31,7 +31,7 @@ const build = data => {
                 .find(
                   record =>
                     record.language === searchLanguage &&
-                    record.curriculum === searchCollection &&
+                    record.curriculum === searchCurriculum &&
                     record.definitionSet ===
                       `definition-set/${definitionSet.id}`,
                 );

@@ -28,11 +28,11 @@ const createDatastore = (data) => {
     required('body'),
     foreignKey('language'),
     required('language'),
-    foreignKey('collection'),
     foreignKey('definitionSet'),
+    foreignKey('curriculum'),
     required('definitionSet'),
     // TODO: Unique composite key for definitions:
-    // Datastore.unique(['language', 'collection', 'definitionSet']),
+    // Datastore.unique(['language', 'curriculum', 'definitionSet']),
   ]);
 
   data
