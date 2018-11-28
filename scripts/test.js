@@ -67,19 +67,20 @@ const getLineage = require('../getLineage');
   const datastore = new Datastore();
 
   datastore.define('comment', [
-    record => {
-      if (record.title !== 'Hello!') throw Error('Incorrect title');
-    },
+    record => (record.title !== 'Hello!' ? 'Incorrect title' : null),
   ]);
 
-  datastore.create({
-    type: 'comment',
-    id: 'a',
-  });
+  datastore.create(
+    {
+      type: 'comment',
+      id: 'a',
+    },
+    '/example/file.yml',
+  );
 
   assert.throws(() => {
     datastore.validate();
-  });
+  }, ({ message }) => message === 'Incorrect title (in comment/a from /example/file.yml)');
 })();
 
 // validate
@@ -87,9 +88,7 @@ const getLineage = require('../getLineage');
   const datastore = new Datastore();
 
   datastore.define('comment', [
-    record => {
-      if (record.title !== 'Hello!') throw Error('Incorrect title');
-    },
+    record => (record.title !== 'Hello!' ? 'Incorrect title' : null),
   ]);
 
   assert.doesNotThrow(() => {
@@ -99,6 +98,70 @@ const getLineage = require('../getLineage');
       title: 'Hello!',
     });
   });
+})();
+
+// Datastore.required
+(() => {
+  const datastore = new Datastore();
+  datastore.define('comment', [Datastore.required('name')]);
+
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+  });
+
+  assert.throws(() => {
+    datastore.validate();
+  }, ({ message }) => message === 'Field "name" is required (in comment/a from unknown source)');
+})();
+
+// Datastore.notNull
+(() => {
+  const datastore = new Datastore();
+  datastore.define('comment', [Datastore.notNull('name')]);
+
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+    name: null,
+  });
+
+  assert.throws(() => {
+    datastore.validate();
+  }, ({ message }) => message === 'Field "name" must not be null (in comment/a from unknown source)');
+})();
+
+// Datastore.string
+(() => {
+  const datastore = new Datastore();
+  datastore.define('comment', [Datastore.string('name')]);
+
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+    name: 24,
+  });
+
+  assert.throws(() => {
+    datastore.validate();
+  }, ({ message }) => message === 'Field "name" must be a string (in comment/a from unknown source)');
+})();
+
+// Datastore.foreignKey
+(() => {
+  const datastore = new Datastore();
+  datastore.define('post', []);
+  datastore.define('comment', [Datastore.foreignKey('post')]);
+
+  datastore.create({
+    type: 'comment',
+    id: 'a',
+    post: 'post/a',
+  });
+
+  assert.throws(() => {
+    datastore.validate();
+  }, ({ message }) => message === 'Cannot find reference "post/a" for field "post" (in comment/a from unknown source)');
 })();
 
 // getLineage

@@ -2,35 +2,55 @@ const yaml = require('js-yaml');
 
 const Datastore = require('./lib/Datastore');
 
-const { required, isString, foreignKey } = Datastore;
+const { required, notNull, string, foreignKey } = Datastore;
 
-const createDatastore = (data) => {
+const createDatastore = data => {
   const datastore = new Datastore();
 
   datastore.define('language', [
-    isString('title'),
+    // title
     required('title'),
+    notNull('title'),
+    string('title'),
+    // parent
+    // TODO: Enforce type of 'language'.
     foreignKey('parent'),
+    required('parent'),
   ]);
 
   datastore.define('curriculum', [
-    isString('title'),
+    // title
     required('title'),
+    notNull('title'),
+    string('title'),
+    // parent
+    // TODO: Enforce type of 'curriculum'.
     foreignKey('parent'),
+    required('parent'),
   ]);
 
   datastore.define('definition-set');
 
   datastore.define('definition', [
-    isString('title'),
+    // title
     required('title'),
-    isString('body'),
+    notNull('title'),
+    string('title'),
+    // body
     required('body'),
-    foreignKey('language'),
+    notNull('body'),
+    string('body'),
+    // language
     required('language'),
-    foreignKey('definitionSet'),
+    notNull('language'),
+    foreignKey('language'),
+    // curriculum
     foreignKey('curriculum'),
+    required('curriculum'),
+    // definitionSet
     required('definitionSet'),
+    notNull('definitionSet'),
+    foreignKey('definitionSet'),
     // TODO: Unique composite key for definitions:
     // Datastore.unique(['language', 'curriculum', 'definitionSet']),
   ]);
